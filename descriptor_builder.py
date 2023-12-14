@@ -37,7 +37,7 @@ class DescriptorBuilder:
         # add base31_24
         descriptor.extend(base31_24)
         
-        # create access
+        # create flags
         AVL = bitarray('0')
         L = bitarray('0')
         D = bitarray('1')
@@ -48,19 +48,19 @@ class DescriptorBuilder:
         else:
             G = bitarray('0')
 
-        access = bitarray()
-        access.extend(G)
-        access.extend(D)
-        access.extend(L)
-        access.extend(AVL)
+        flags = bitarray()
+        flags.extend(G)
+        flags.extend(D)
+        flags.extend(L)
+        flags.extend(AVL)
         
-        # add access
-        descriptor.extend(access)
+        # add flags
+        descriptor.extend(flags)
 
         # add seg_length_19_16
         descriptor.extend(seg_length_19_16)
 
-        # create flags
+        # create access
         if ((not readable and executable) or (readable and executable)) and not writable:
             Type = bitarray('1')
             if readable:
@@ -87,17 +87,17 @@ class DescriptorBuilder:
         DPL = bitarray('00')
         P = bitarray('1')
         
-        flags = bitarray()
-        flags.extend(P)
-        flags.extend(DPL)
-        flags.extend(S)
-        flags.extend(Type)
-        flags.extend(Subtype)
-        flags.extend(Accessibility)
-        flags.extend(Access)
+        access = bitarray()
+        access.extend(P)
+        access.extend(DPL)
+        access.extend(S)
+        access.extend(Type)
+        access.extend(Subtype)
+        access.extend(Accessibility)
+        access.extend(Access)
 
-        # add flags
-        descriptor.extend(flags)
+        # add access
+        descriptor.extend(access)
 
         # add base23_16
         descriptor.extend(base23_16)
@@ -132,25 +132,25 @@ class DescriptorBuilder:
         # add base31_24
         descriptor.extend(base31_24)
         
-        # create access
+        # create flags
         AVL = bitarray('0')
         L = bitarray(''.join(random.choice(['1', '0'])), endian='big')
         D = bitarray(''.join(random.choice(['1', '0'])), endian='big')
         G = bitarray(''.join(random.choice(['1', '0'])), endian='big')
 
-        access = bitarray()
-        access.extend(G)
-        access.extend(D)
-        access.extend(L)
-        access.extend(AVL)
+        flags = bitarray()
+        flags.extend(G)
+        flags.extend(D)
+        flags.extend(L)
+        flags.extend(AVL)
         
-        # add access
-        descriptor.extend(access)
+        # add flags
+        descriptor.extend(flags)
 
         # add seg_length_19_16
         descriptor.extend(seg_length_19_16)
 
-        # create flags
+        # create access
         if ((not readable and executable) or (readable and executable)) and not writable:
             Type = bitarray('1')
             if readable:
@@ -177,17 +177,17 @@ class DescriptorBuilder:
         DPL = bitarray(''.join(random.choice(['1', '0']) for i in range(2)), endian='big')
         P = bitarray(''.join(random.choice(['1', '0'])), endian='big')
         
-        flags = bitarray()
-        flags.extend(P)
-        flags.extend(DPL)
-        flags.extend(S)
-        flags.extend(Type)
-        flags.extend(Subtype)
-        flags.extend(Accessibility)
-        flags.extend(Access)
+        access = bitarray()
+        access.extend(P)
+        access.extend(DPL)
+        access.extend(S)
+        access.extend(Type)
+        access.extend(Subtype)
+        access.extend(Accessibility)
+        access.extend(Access)
 
-        # add flags
-        descriptor.extend(flags)
+        # add access
+        descriptor.extend(access)
 
         # add base23_16
         descriptor.extend(base23_16)
@@ -237,42 +237,42 @@ class DescriptorBuilder:
         print("Segment limit bin (big-endian):", segment_limit.to01())
         print("Segment limit hex (big-endian):", bytearray(segment_limit).hex())
         
-        print("=== Access bits ===")    
-        access = descriptor[8:12]
-        print(tabulate({'G':str(access[0]), 'D':str(access[1]), 'L':str(access[2]), 'AVL':str(access[3])}, headers="keys", tablefmt="fancy_outline"))
+        print("=== Flags bits ===")    
+        flags = descriptor[8:12]
+        print(tabulate({'G':str(flags[0]), 'D':str(flags[1]), 'L':str(flags[2]), 'AVL':str(flags[3])}, headers="keys", tablefmt="fancy_outline"))
         
-        print("=== Flags bits ===")
-        flags = descriptor[16:24]
+        print("=== Access bits ===")
+        access = descriptor[16:24]
         print(
             tabulate(
                 {
-                    'P':str(flags[0]), 
+                    'P':str(access[0]), 
                     
-                    'DPL':flags[1:3].to01(), 
+                    'DPL':access[1:3].to01(), 
                     
-                    'S':str(flags[3]), 
+                    'S':str(access[3]), 
 
                     'Type' + 
                     '(' + 
-                    ('Code' if flags[4] == 1 else 'Data') + 
-                    ')' :str(flags[4]),
+                    ('Code' if access[4] == 1 else 'Data') + 
+                    ')' :str(access[4]),
 
                     'Subtype' +
                     '(' +
-                    ('Not conforming' if flags[4] == 1 and flags[5] == 0 else '') +
-                    ('Conforming' if flags[4] == 1 and flags[5] == 1 else '') +
-                    ('Expand up' if flags[4] == 0 and flags[5] == 0 else '') +
-                    ('Expand up' if flags[4] == 0 and flags[5] == 1 else '') +
-                    ')' :str(flags[5]),
+                    ('Not conforming' if access[4] == 1 and access[5] == 0 else '') +
+                    ('Conforming' if access[4] == 1 and access[5] == 1 else '') +
+                    ('Expand up' if access[4] == 0 and access[5] == 0 else '') +
+                    ('Expand up' if access[4] == 0 and access[5] == 1 else '') +
+                    ')' :str(access[5]),
 
                     'Accessibility' + 
                     '(' + 
-                    ('R' if flags[4] == 0 or (flags[6] == 1 and flags[4] == 1) else '') + 
-                    ('W' if flags[4] == 0 and flags[6] == 1 else '') +
-                    ('X' if flags[4] == 1 else '') +
-                    ')' :str(flags[6]),
+                    ('R' if access[4] == 0 or (access[6] == 1 and access[4] == 1) else '') + 
+                    ('W' if access[4] == 0 and access[6] == 1 else '') +
+                    ('X' if access[4] == 1 else '') +
+                    ')' :str(access[6]),
 
-                    'Access':str(flags[7])
+                    'Access':str(access[7])
                 }, headers="keys", tablefmt="fancy_outline"))
 
 if __name__ == "__main__":
