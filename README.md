@@ -19,11 +19,11 @@
 
 ```PYTHON
 === Descriptor===
-Descriptor bin (big-endian): 0000000001000000100111110000000001111110000000000000001000000000
-Descriptor hex (big-endian): 00409f007e000200
-Descriptor bin (little-endian): 0000000001000000000000000111111000000000111110010000001000000000
-Descriptor hex (little-endian): 0002007e009f4000
-Descriptor FASM assembler (little-endian): "db 0x00, 0x02, 0x00, 0x7e, 0x00, 0x9f, 0x40, 0x00"
+Descriptor bin (big-endian): 0000000001000000100110100000000001111110000000000000001000000000
+Descriptor hex (big-endian): 00409a007e000200
+Descriptor bin (little-endian): 0000000001000000000000000111111000000000010110010000001000000000
+Descriptor hex (little-endian): 0002007e009a4000
+Descriptor FASM assembler (little-endian): "db 0x00, 0x02, 0x00, 0x7e, 0x00, 0x9a, 0x40, 0x00"
 === Base address ===
 Base address bin (big-endian): 00000000000000000111111000000000
 Base address hex (big-endian): 00007e00
@@ -37,12 +37,12 @@ Segment limit hex (big-endian): 000200
 │   0 │   1 │   0 │     0 │
 ╘═════╧═════╧═════╧═══════╛
 === Flags bits ===
-╒═════╤═══════╤═════╤══════════╤═════════════════════╤═══════════════════════╤══════════════╕
-│   P │   DPL │   S │   Access │   Accessibility(RX) │   Subtype(Conforming) │   Type(Code) │
-╞═════╪═══════╪═════╪══════════╪═════════════════════╪═══════════════════════╪══════════════╡
-│   1 │     0 │   1 │        1 │                   1 │                     1 │            1 │
-│     │     0 │     │          │                     │                       │              │
-╘═════╧═══════╧═════╧══════════╧═════════════════════╧═══════════════════════╧══════════════╛
+╒═════╤═══════╤═════╤══════════════╤═══════════════════════════╤═════════════════════╤══════════╕ 
+│   P │   DPL │   S │   Type(Code) │   Subtype(Not conforming) │   Accessibility(RX) │   Access │ 
+╞═════╪═══════╪═════╪══════════════╪═══════════════════════════╪═════════════════════╪══════════╡ 
+│   1 │     0 │   1 │            1 │                         0 │                   1 │        0 │ 
+│     │     0 │     │              │                           │                     │          │ 
+╘═════╧═══════╧═════╧══════════════╧═══════════════════════════╧═════════════════════╧══════════╛
 ```
 
 ## Ссылки
@@ -51,3 +51,4 @@ Segment limit hex (big-endian): 000200
 + <https://wasm.in/blogs/category/zaschischennyj-rezhim.20/?page=2>
 + <http://sasm.narod.ru/docs/pm/pm_main.htm>
 + <https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf>
++ <https://wiki.osdev.org/Global_Descriptor_Table>

@@ -63,8 +63,6 @@ class DescriptorBuilder:
         # create flags
         if ((not readable and executable) or (readable and executable)) and not writable:
             Type = bitarray('1')
-            Subtype = bitarray('1')
-            Access = bitarray('1')
             if readable:
                 Accessibility = bitarray('1')
             else:
@@ -77,14 +75,14 @@ class DescriptorBuilder:
             return None
         else:  
             Type = bitarray('0')
-            Subtype = bitarray('0')
-            Access = bitarray('0')
             # Data segments are always readable
             if writable:
                 Accessibility = bitarray('1')
             else:
                 Accessibility = bitarray('0')
 
+        Subtype = bitarray('0')
+        Access = bitarray('0')
         S = bitarray('1')
         DPL = bitarray('00')
         P = bitarray('1')
@@ -93,10 +91,10 @@ class DescriptorBuilder:
         flags.extend(P)
         flags.extend(DPL)
         flags.extend(S)
-        flags.extend(Access)
-        flags.extend(Accessibility)
-        flags.extend(Subtype)
         flags.extend(Type)
+        flags.extend(Subtype)
+        flags.extend(Accessibility)
+        flags.extend(Access)
 
         # add flags
         descriptor.extend(flags)
@@ -183,10 +181,10 @@ class DescriptorBuilder:
         flags.extend(P)
         flags.extend(DPL)
         flags.extend(S)
-        flags.extend(Access)
-        flags.extend(Accessibility)
-        flags.extend(Subtype)
         flags.extend(Type)
+        flags.extend(Subtype)
+        flags.extend(Accessibility)
+        flags.extend(Access)
 
         # add flags
         descriptor.extend(flags)
@@ -212,7 +210,7 @@ class DescriptorBuilder:
         print("Descriptor hex (big-endian):", bytearray(descriptor).hex())
         print("Descriptor bin (little-endian):", descriptor.to01()[::-1])
         print("Descriptor hex (little-endian):", bytearray(descriptor)[::-1].hex())
-        print("Descriptor FASM assembler (little-endian):", '"db ' + ', '.join('0x' + i   for i in wrap(bytearray(descriptor)[::-1].hex(), width=2)) + '"')
+        print("Descriptor FASM assembler (little-endian):", '"db ' + ', '.join('0x' + i for i in wrap(bytearray(descriptor)[::-1].hex(), width=2)) + '"')
         
         print("=== Base address ===")
         base31_24 = descriptor[0:8]
@@ -249,29 +247,32 @@ class DescriptorBuilder:
             tabulate(
                 {
                     'P':str(flags[0]), 
+                    
                     'DPL':flags[1:3].to01(), 
+                    
                     'S':str(flags[3]), 
-                    'Access':str(flags[4]), 
-
-                    'Accessibility' + 
-                    '(' + 
-                    ('R' if flags[7] == 0 or (flags[5] == 1 and flags[7] == 1) else '') + 
-                    ('W' if flags[7] == 0 and flags[5] == 1 else '') +
-                    ('X' if flags[7] == 1 else '') +
-                    ')' :str(flags[5]),
-
-                    'Subtype' +
-                    '(' +
-                    ('Not conforming' if flags[7] == 1 and flags[6] == 0 else '') +
-                    ('Conforming' if flags[7] == 1 and flags[6] == 1 else '') +
-                    ('Expand up' if flags[7] == 0 and flags[6] == 0 else '') +
-                    ('Expand up' if flags[7] == 0 and flags[6] == 1 else '') +
-                    ')' :str(flags[6]),
 
                     'Type' + 
                     '(' + 
-                    ('Code' if flags[7] == 1 else 'Data') + 
-                    ')' :str(flags[7])
+                    ('Code' if flags[4] == 1 else 'Data') + 
+                    ')' :str(flags[4]),
+
+                    'Subtype' +
+                    '(' +
+                    ('Not conforming' if flags[4] == 1 and flags[5] == 0 else '') +
+                    ('Conforming' if flags[4] == 1 and flags[5] == 1 else '') +
+                    ('Expand up' if flags[4] == 0 and flags[5] == 0 else '') +
+                    ('Expand up' if flags[4] == 0 and flags[5] == 1 else '') +
+                    ')' :str(flags[5]),
+
+                    'Accessibility' + 
+                    '(' + 
+                    ('R' if flags[4] == 0 or (flags[6] == 1 and flags[4] == 1) else '') + 
+                    ('W' if flags[4] == 0 and flags[6] == 1 else '') +
+                    ('X' if flags[4] == 1 else '') +
+                    ')' :str(flags[6]),
+
+                    'Access':str(flags[7])
                 }, headers="keys", tablefmt="fancy_outline"))
 
 if __name__ == "__main__":
@@ -290,12 +291,11 @@ if __name__ == "__main__":
         base_address=bitarray(f'{0x8000:0>32b}'),
         limit=bitarray(f'{0x200:0>20b}', endian='big'),
         executable=False,
-        readable=False,
+        readable=True,
         writable=True,
         limit_exented=False
         )
     builder.info(data_seg_descriptor)   
 
     descriptor = builder.generate_random()
-    builder.info(descriptor) 
-   
+    builder.info(descriptor)
