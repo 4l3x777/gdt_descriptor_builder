@@ -15,6 +15,37 @@
 + ```info``` для печати информации о дескрипторе
 + ```make_descriptor_protected_mode``` для создания дескриптора для работы в protected mode
 
+## Примеры использования
+
+```PYTHON
+builder = DescriptorBuilder() 
+# code segment descriptor with base 0x7e00 and limit 0x200, access on RX - read & execute
+code_seg_descriptor = builder.make_descriptor_protected_mode(
+    base_address=bitarray(f'{0x7e00:0>32b}'),
+    limit=bitarray(f'{0x200:0>20b}', endian='big'),
+    executable=True,
+    readable=True,
+    writable=False,
+    limit_exented=False
+    )   
+builder.info(code_seg_descriptor)
+
+# data segment descriptor with base 0x8000 and limit 0x200, access on RW - read & write
+data_seg_descriptor = builder.make_descriptor_protected_mode(
+    base_address=bitarray(f'{0x8000:0>32b}'),
+    limit=bitarray(f'{0x200:0>20b}', endian='big'),
+    executable=False,
+    readable=True,
+    writable=True,
+    limit_exented=False
+    )
+builder.info(data_seg_descriptor)   
+
+# random segment descriptor generator
+descriptor = builder.generate_random()
+builder.info(descriptor)
+```
+
 ## Пример результата
 
 ```PYTHON

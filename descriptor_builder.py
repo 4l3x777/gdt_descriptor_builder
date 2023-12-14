@@ -2,7 +2,6 @@ import random
 from bitarray import bitarray
 from tabulate import tabulate
 from textwrap import wrap
-import struct
 
 class DescriptorBuilder:
 
@@ -275,7 +274,7 @@ class DescriptorBuilder:
                     'Access':str(access[7])
                 }, headers="keys", tablefmt="fancy_outline"))
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
     builder = DescriptorBuilder() 
     code_seg_descriptor = builder.make_descriptor_protected_mode(
         base_address=bitarray(f'{0x7e00:0>32b}'),
@@ -298,4 +297,4 @@ if __name__ == "__main__":
     builder.info(data_seg_descriptor)   
 
     descriptor = builder.generate_random()
-    builder.info(descriptor)
+    builder.info(descriptor)'''
