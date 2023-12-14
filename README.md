@@ -26,7 +26,7 @@ code_seg_descriptor = builder.make_descriptor_protected_mode(
     executable=True,
     readable=True,
     writable=False,
-    limit_exented=False
+    limit_extended=False
     )   
 builder.info(code_seg_descriptor)
 
@@ -37,7 +37,7 @@ data_seg_descriptor = builder.make_descriptor_protected_mode(
     executable=False,
     readable=True,
     writable=True,
-    limit_exented=False
+    limit_extended=False
     )
 builder.info(data_seg_descriptor)   
 

@@ -14,7 +14,7 @@ class DescriptorBuilder:
                 random.choice([True, False]))
 
     # from https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf
-    def make_descriptor_protected_mode(self, base_address: bitarray, limit: bitarray, readable: bool, executable: bool, writable: bool, limit_exented: bool = True) -> bitarray:
+    def make_descriptor_protected_mode(self, base_address: bitarray, limit: bitarray, readable: bool, executable: bool, writable: bool, limit_extended: bool = True) -> bitarray:
         # big endian concept
         descriptor = bitarray()
         
@@ -42,7 +42,7 @@ class DescriptorBuilder:
         D = bitarray('1')
 
         # A 20-bit value describing the length of the segment. If the G flag (see below) is not set, this value represents the actual segment length. If the G flag is set, this value is multiplied with 4096 to represent the segment length. So if you set it to FFFFFh (20 bits) and G is set, it is 10000h * 4096 = 4GB.
-        if limit_exented:
+        if limit_extended:
             G = bitarray('1')
         else:
             G = bitarray('0')
@@ -282,7 +282,7 @@ class DescriptorBuilder:
         executable=True,
         readable=True,
         writable=False,
-        limit_exented=False
+        limit_extended=False
         )   
     builder.info(code_seg_descriptor)
 
@@ -292,7 +292,7 @@ class DescriptorBuilder:
         executable=False,
         readable=True,
         writable=True,
-        limit_exented=False
+        limit_extended=False
         )
     builder.info(data_seg_descriptor)   
 
